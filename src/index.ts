@@ -1,6 +1,7 @@
+import { APIGatewayEvent, APIGatewayProxyHandler } from 'aws-lambda';
 import CreateItemHandler from './infrastructure/CreateItemHandler';
 
-const createItemHandler = async (event: any, context: any) => {
+const createItemHandler: APIGatewayProxyHandler = async (event: APIGatewayEvent) => {
   return await new CreateItemHandler().execute(event);
 };
 
