@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-ts-ddd-template
+
+  SAM TypeScript DDD Template
+
+Globals:
+  Function:
+    Timeout: 5
+    Environment:
+      Variables:
+        TABLE_NAME: !Select [1, !Split ['/', !GetAtt ItemTable.Arn]]
+
+Parameters:
+  TableName:
+    Type: String
+    Default: 'items'
+
+Resources:
+  CreateItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/index.createItemHandler
+      Description: Handle
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Select [1, !Split ['/', !GetAtt ItemTable.Arn]]
+      Events:
+        CreateItem:
+          Type: Api
+          Properties:
+            Path: /items
+            Method: post
+
+  ItemTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      TableName: !Ref TableName
+
+Outputs:
+  CreateItemApi:
+    Description: 'API Gateway endpoint URL for Prod stage for CreateItemFunction'
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/items/'
