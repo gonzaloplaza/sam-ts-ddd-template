@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && tsc && sam build",
-    "dev": "sam local start-api",
+    "dev": "npm run build && sam local start-api",
     "deploy": "npm run build && sam deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

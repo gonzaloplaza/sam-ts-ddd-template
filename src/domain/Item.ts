@@ -1,4 +1,4 @@
-export default class Item {
+export class Item {
   private id: string;
   private name: string;
   private createdAt: string;
