@@ -1,12 +1,13 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import CreateItem from '../application/CreateItem';
 import DynamodbItemRepository from './DynamodbItemRepository';
+import Uuidv4Generator from './Uuidv4Generator';
 
 export default class CreateItemHandler {
   private createItem: CreateItem;
 
   constructor() {
-    this.createItem = new CreateItem(new DynamodbItemRepository());
+    this.createItem = new CreateItem(new DynamodbItemRepository(), new Uuidv4Generator());
   }
 
   public async execute(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {

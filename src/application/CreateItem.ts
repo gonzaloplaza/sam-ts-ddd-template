@@ -1,16 +1,16 @@
 import Item from '../domain/Item';
 import { ItemRepository } from '../domain/ItemRepository';
-import { v4 as uuidv4 } from 'uuid';
+import { UuidGenerator } from '../domain/UuidGenerator';
 
 type CreateItemInput = {
   name: string;
 };
 
 export default class CreateItem {
-  constructor(private itemRepository: ItemRepository) {}
+  constructor(private itemRepository: ItemRepository, private uuidGenerator: UuidGenerator) {}
 
   public async execute(input: CreateItemInput): Promise<void> {
-    let item = new Item(uuidv4(), input.name, new Date().toISOString());
+    let item = new Item(this.uuidGenerator.random(), input.name, new Date().toISOString());
     await this.itemRepository.save(item);
   }
 }
