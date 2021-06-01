@@ -5,9 +5,11 @@ import { Uuidv4Generator } from './Uuidv4Generator';
 
 export class CreateItemHandler {
   private createItem: CreateItem;
+  private uuidGenerator: Uuidv4Generator;
 
   constructor() {
-    this.createItem = new CreateItem(new DynamodbItemRepository(), new Uuidv4Generator());
+    this.createItem = new CreateItem(new DynamodbItemRepository());
+    this.uuidGenerator = new Uuidv4Generator();
   }
 
   public async execute(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -20,7 +22,11 @@ export class CreateItemHandler {
     if (!body.name) {
       return this.makeResponse(400, { success: false });
     } else {
-      await this.createItem.execute({ name: body.name });
+      await this.createItem.execute({
+        id: this.uuidGenerator.random(),
+        name: body.name,
+        createdAt: new Date().toString()
+      });
       return this.makeResponse(200, { success: true });
     }
   }
