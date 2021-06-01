@@ -1,5 +1,5 @@
 import { Item } from '../domain/Item';
-import { ItemRepository } from '../domain/ItemRepository';
+import { MessageSender } from '../domain/MessageSender';
 
 type CreateItemInput = {
   id: string;
@@ -8,9 +8,9 @@ type CreateItemInput = {
 };
 
 export class CreateItem {
-  constructor(private itemRepository: ItemRepository) {}
+  constructor(private sender: MessageSender) {}
 
   public async execute(input: CreateItemInput): Promise<void> {
-    await this.itemRepository.save(new Item(input.id, input.name, input.createdAt));
+    await this.sender.send(new Item(input.id, input.name, input.createdAt));
   }
 }

@@ -1,14 +1,14 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { CreateItem } from '../application/CreateItem';
-import { DynamodbItemRepository } from './DynamodbItemRepository';
-import { Uuidv4Generator } from './Uuidv4Generator';
+import { CreateItem } from '../../application/CreateItem';
+import { SQSMessageSender } from '../SQSMessageSender';
+import { Uuidv4Generator } from '../Uuidv4Generator';
 
 export class CreateItemHandler {
   private createItem: CreateItem;
   private uuidGenerator: Uuidv4Generator;
 
   constructor() {
-    this.createItem = new CreateItem(new DynamodbItemRepository());
+    this.createItem = new CreateItem(new SQSMessageSender());
     this.uuidGenerator = new Uuidv4Generator();
   }
 
@@ -27,7 +27,7 @@ export class CreateItemHandler {
         name: body.name,
         createdAt: new Date().toString()
       });
-      return this.makeResponse(200, { success: true });
+      return this.makeResponse(200, {});
     }
   }
 
