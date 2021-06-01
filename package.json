@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.907.0",
-    "uuid": "^3.3.2"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@aws-sdk/types": "^3.15.0",
