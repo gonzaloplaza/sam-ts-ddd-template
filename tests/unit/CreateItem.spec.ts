@@ -1,19 +1,19 @@
 import { CreateItem } from '../../src/application/CreateItem';
 import { ItemMother } from './domain/ItemMother';
-import { ItemRepositoryMock } from './domain/ItemRepositoryMock';
+import { MessageSenderMock } from './domain/MessageSenderMock';
 
-describe('Tests CreateItem Service', function () {
-  let repository: ItemRepositoryMock;
+describe('Test CreateItem Service', function () {
+  let sender: MessageSenderMock;
 
   beforeEach(() => {
-    repository = new ItemRepositoryMock();
+    sender = new MessageSenderMock();
   });
-  it('should save an item object', async () => {
-    const service = new CreateItem(repository);
+  it('should send an item object', async () => {
+    const service = new CreateItem(sender);
 
     const testItem = ItemMother.random();
     await service.execute(testItem);
 
-    repository.assertSaveHasBeenCalledWith(testItem);
+    sender.assertSendHasBeenCalledWith(testItem);
   });
 });

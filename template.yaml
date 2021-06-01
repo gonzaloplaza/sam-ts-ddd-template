@@ -11,11 +11,15 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Select [1, !Split ['/', !GetAtt ItemTable.Arn]]
+        QUEUE_URL: !Ref CreatedItemQueue
 
 Parameters:
   TableName:
     Type: String
     Default: 'items'
+  QueueName:
+    Type: String
+    Default: 'itemqueue'
 
 Resources:
   CreateItemFunction:
@@ -24,16 +28,37 @@ Resources:
       Handler: dist/src/index.createItemHandler
       Description: Handle
       Runtime: nodejs14.x
-      MemorySize: 1024
+      MemorySize: 256
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Select [1, !Split ['/', !GetAtt ItemTable.Arn]]
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt CreatedItemQueue.QueueName
+
       Events:
         CreateItem:
           Type: Api
           Properties:
             Path: /items
             Method: post
+
+  CreatedItemConsumerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: createdItem event handler
+      Handler: dist/src/index.createdItemEventHandler
+      MemorySize: 512
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Select [1, !Split ['/', !GetAtt ItemTable.Arn]]
+        - SQSPollerPolicy:
+            QueueName: !GetAtt CreatedItemQueue.QueueName
+      Runtime: nodejs14.x
+      Events:
+        ItemCreatedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt CreatedItemQueue.Arn
+            BatchSize: 10
+            Enabled: true
 
   ItemTable:
     Type: AWS::Serverless::SimpleTable
@@ -43,7 +68,16 @@ Resources:
         Type: String
       TableName: !Ref TableName
 
+  CreatedItemQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      DelaySeconds: 0
+      QueueName: !Ref QueueName
+
 Outputs:
   CreateItemApi:
     Description: 'API Gateway endpoint URL for Prod stage for CreateItemFunction'
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/items/'
+  CreatedItemQueue:
+    Description: 'SQS Queue URL for CreatedItemQueue'
+    Value: !Ref CreatedItemQueue
