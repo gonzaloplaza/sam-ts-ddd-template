@@ -6,7 +6,7 @@ on:
       - 'master'
 jobs:
   test:
-    name: Aircall Test Pager (Node ${{ matrix.node-version }} on ${{ matrix.operating-system }})
+    name: Sam TypeScript temlate (Node ${{ matrix.node-version }} on ${{ matrix.operating-system }})
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
