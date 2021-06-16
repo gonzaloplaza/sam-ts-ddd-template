@@ -4,10 +4,10 @@ import faker from 'faker';
 
 export class ItemMother {
   static random(): Item {
-    return new Item(
-      new Uuidv4Generator().random(),
-      faker.name.findName(),
-      new Date().toISOString()
-    );
+    return {
+      id: new Uuidv4Generator().random(),
+      name: faker.name.findName(),
+      createdAt: new Date().toISOString()
+    };
   }
 }
