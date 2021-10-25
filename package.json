@@ -16,7 +16,7 @@
     "test": "jest --clearCache && jest"
   },
   "dependencies": {
-    "aws-sdk": "^2.929.0",
+    "aws-sdk": "^2.1013.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
